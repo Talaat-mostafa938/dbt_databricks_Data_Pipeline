@@ -45,3 +45,11 @@ Airflow is used to orchestrate dbt runs with:
 
 Webserver, Scheduler, Worker & Flower
 * DAG file: dags/dbt_dag.py
+---
+
+## 📊 Power BI Integration
+After dbt models are materialized in Databricks:
+  * Connect Power BI to Databricks via native connector.
+  * Build visual dashboards showing:
+![Dashboard](https://github.com/Talaat-mostafa938/dbt_databricks_Data_Pipeline/blob/main/images/Dashboard.png)
+
