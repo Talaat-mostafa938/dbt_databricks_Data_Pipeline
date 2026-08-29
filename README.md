@@ -35,3 +35,6 @@
 * stg_products.sql
   
 These standardize and clean raw data from Snowflake.
+
+### Mart Models
+* fact_sales.sql 
