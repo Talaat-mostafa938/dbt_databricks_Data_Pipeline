@@ -52,4 +52,12 @@ After dbt models are materialized in Databricks:
   * Connect Power BI to Databricks via native connector.
   * Build visual dashboards showing:
 ![Dashboard](https://github.com/Talaat-mostafa938/dbt_databricks_Data_Pipeline/blob/main/images/Dashboard.png)
+---
+
+## 🐳 Docker Setup
+Build and Run:
+| Command | Description |
+|---|---|
+| `docker-compose build` | Build the Docker images |
+| `docker-compose up` | Start the Docker containers |
 
