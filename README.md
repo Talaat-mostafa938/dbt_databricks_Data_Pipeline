@@ -38,3 +38,10 @@ These standardize and clean raw data from Snowflake.
 
 ### Mart Models
 * fact_sales.sql 
+---
+
+## 🔄 Airflow Integration
+Airflow is used to orchestrate dbt runs with:
+
+Webserver, Scheduler, Worker & Flower
+* DAG file: dags/dbt_dag.py
