@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: raw_data
+    catalog: dbt_tutorial_dev
+    schema: source
+    tables:
+      - name: customers
+      - name: orders
+      - name: products
+      - name: order_items
+
+

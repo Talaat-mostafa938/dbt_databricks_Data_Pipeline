@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: stg_customers
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+        
+  - name: stg_orders
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+      
+      - name: order_status
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Completed', 'Pending', 'Cancelled']
+
+  - name: stg_products
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_order_items
+    columns:
+      - name: item_id
+        tests:
+          - not_null
+          - unique
+        
+     
