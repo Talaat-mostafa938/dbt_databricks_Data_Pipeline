@@ -1,0 +1,110 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: airflow-postgres
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow -d airflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dbt:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dbt-container
+    depends_on:
+      - postgres
+    volumes:
+      - ./dbt_databricks_project:/usr/app/dbt_databricks_project
+    environment:
+      - DBT_PROFILES_DIR=/usr/app/dbt_databricks_project
+    command: tail -f /dev/null
+
+  airflow-init:
+    image: apache/airflow:2.7.1
+    container_name: airflow-init
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - _AIRFLOW_DB_UPGRADE=true
+      - _AIRFLOW_WWW_USER_CREATE=true
+      - _AIRFLOW_WWW_USER_USERNAME=admin
+      - _AIRFLOW_WWW_USER_PASSWORD=admin
+    command: version
+    volumes:
+      - ./dbt_databricks_project/airflow/dags:/opt/airflow/dags
+      - ./dbt_databricks_project/airflow/logs:/opt/airflow/logs
+      - ./dbt_databricks_project/airflow/plugins:/opt/airflow/plugins
+    entrypoint: >
+      /bin/bash -c "
+      airflow db init &&
+      airflow users create -r Admin -u admin -p admin -e admin@example.com -f admin -l User &&
+      exit 0
+      "
+
+  airflow-webserver:
+    image: apache/airflow:2.7.1
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__FERNET_KEY=''
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=false
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+    volumes:
+      - ./dbt_databricks_project/airflow/dags:/opt/airflow/dags
+      - ./dbt_databricks_project/airflow/logs:/opt/airflow/logs
+      - ./dbt_databricks_project/airflow/plugins:/opt/airflow/plugins
+      - ./dbt_databricks_project:/usr/app/dbt_databricks_project
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8080:8080"
+    user: "0:0"
+    restart: always
+    command: webserver
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  airflow-scheduler:
+    image: apache/airflow:2.7.1
+    depends_on:
+      airflow-webserver:
+        condition: service_healthy
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__FERNET_KEY=''
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=false
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+    volumes:
+      - ./dbt_databricks_project/airflow/dags:/opt/airflow/dags
+      - ./dbt_databricks_project/airflow/logs:/opt/airflow/logs
+      - ./dbt_databricks_project/airflow/plugins:/opt/airflow/plugins
+      - ./dbt_databricks_project/:/usr/app/dbt_databricks_project
+      - /var/run/docker.sock:/var/run/docker.sock
+    user: "0:0"
+    restart: always
+    command: scheduler
+
+volumes:
+  postgres-data:
