@@ -15,3 +15,13 @@
 * order_items.csv
 * products.csv
 * customers.csv
+---
+
+## ⚙️ Technologies Used
+| **Tool** | **Role** |
+|---|---|
+| **Databricks** | Cloud data warehouse |
+| **dbt** | Data transformation and modeling |
+| **Airflow** | Workflow orchestration |
+| **Power BI** | Dashboard and visualization |
+| **Docker** | Containerization and environment setup |
