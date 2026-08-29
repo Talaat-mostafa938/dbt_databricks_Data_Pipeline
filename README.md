@@ -5,8 +5,8 @@
 ---
 This project demonstrates a modern Data Engineering pipeline using:
 
-. Databricks as the cloud data warehouse
-. dbt (Data Build Tool) for data modeling and transformation
-. Apache Airflow for workflow orchestration 
-. Power BI for dashboard and reporting
-. Docker for containerization and environment setup
+. Databricks as the cloud data warehouse  
+. dbt (Data Build Tool) for data modeling and transformation  
+. Apache Airflow for workflow orchestration   
+. Power BI for dashboard and reporting  
+. Docker for containerization and environment setup  
