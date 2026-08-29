@@ -25,3 +25,12 @@
 | **Airflow** | Workflow orchestration |
 | **Power BI** | Dashboard and visualization |
 | **Docker** | Containerization and environment setup |
+---
+
+## 🧱 dbt Models
+### Staging Models
+* stg_customers.sql 
+* stg_orders.sql 
+* stg_order_items.sql 
+* stg_products.sql 
+These standardize and clean raw data from Snowflake.
